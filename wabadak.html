@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+<title>WA BADAK V1 - Client</title>
+<style>
+:root{
+  --bg:#fbfbfd; --card:#fff; --accent1:#ff2ad0; --accent2:#4b00ff;
+  --muted:#98a0a8; --shadow: 0 18px 30px rgba(40,40,90,0.08);
+}
+*{box-sizing:border-box;font-family:Inter, system-ui, Roboto, Arial;}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#ffffff,#fbfbfe);display:flex;align-items:center;justify-content:center;padding:28px}
+.app{width:100%;max-width:520px;transform:translateY(10px)}
+.card{background:var(--card);border-radius:16px;padding:28px;box-shadow:var(--shadow);text-align:center;position:relative}
+.logo{width:72px;height:72px;border-radius:50%;display:inline-grid;place-items:center;margin:-54px auto 8px;background:#fff;border:8px solid var(--card)}
+.logo svg{width:40px;height:40px}
+h1{margin:6px 0 18px;color:var(--accent2);font-size:22px;letter-spacing:1px}
+.input{display:block;width:100%;padding:14px 16px;border-radius:12px;border:1px solid #eee;margin:10px 0;background:#fff;font-size:15px}
+.btn{display:inline-block;width:100%;padding:14px;border-radius:12px;border:none;color:#fff;font-weight:700;font-size:16px;background:linear-gradient(90deg,var(--accent1),var(--accent2));cursor:pointer;box-shadow:0 8px 20px rgba(75,0,255,0.14)}
+.btn.secondary{background:transparent;color:var(--accent2);border:2px solid rgba(75,0,255,0.06);box-shadow:none;font-weight:700}
+.small{font-size:13px;color:var(--muted);margin-top:8px}
+
+/* topbar & drawer (hidden on login) */
+.topbar{position:fixed;right:18px;top:18px;z-index:40;display:none}
+.hamb{width:46px;height:46px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 16px 26px rgba(30,30,60,0.08);cursor:pointer}
+.drawer{position:fixed;right:18px;top:80px;background:#fff;border-radius:12px;padding:8px 6px;box-shadow:0 18px 30px rgba(20,20,40,0.12);display:none;min-width:160px}
+.drawer a{display:block;padding:10px 14px;border-radius:8px;color:#333;text-decoration:none;font-weight:700}
+.drawer a:hover{background:#f7f5ff;color:var(--accent2)}
+
+/* pages */
+.page{display:none}
+.page.active{display:block}
+.home-hello{font-size:18px;color:#222;margin-bottom:6px}
+.card-compact{padding:18px;border-radius:14px;box-shadow:0 12px 22px rgba(30,30,50,0.06);text-align:left}
+
+/* wa badak */
+.status{margin-top:12px;padding:10px;border-radius:10px;background:#f7f6ff;border:1px solid rgba(75,0,255,0.06);font-weight:700}
+
+/* toast */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,0.12);display:none;font-weight:700}
+
+/* tes */
+.container {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 2px solid #C900FF;
+      outline: none;
+      font-size: 1rem;
+      background: #fff;
+      transition: 0.3s;
+      box-sizing: border-box;
+    }
+    
+      img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    
+    button {
+      background: linear-gradient(90deg, #ff2ad0, #4b00ff);
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #111;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 0 auto;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 18px #1e90ff66;
+    }
+    .result {
+      margin-top: 20px;
+      min-height: 120px;
+    }
+    .result img {
+      max-width: 100%;
+      border-radius: 15px;
+      border: 2px solid #C900FF;
+      margin-top: 15px;
+      box-shadow: 0 0 20px rgba(30,144,255,0.3);
+    }
+    .loader {
+      border: 4px solid #333;
+      border-top: 4px solid #C900FF;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .download-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      background: linear-gradient(90deg, #FFFFFF, #C900FF);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .download-btn:hover {
+      box-shadow: 0 0 15px #00aaffaa;
+      transform: scale(1.05);
+    }
+
+<style>
+/* === Popup Notifikasi Berhasil === */
+.success-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.success-box {
+  background: #fff;
+  padding: 22px;
+  border-radius: 18px;
+  text-align: center;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+  animation: fadeIn .3s ease;
+}
+
+.success-box h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  color: #a020f0; /* ungu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.success-box p {
+  font-size: 15px;
+  color: #333;
+  margin: 0 0 16px;
+}
+
+.success-box button {
+  background: linear-gradient(90deg, #ff2ad0, #4b00ff);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: transform 0.2s;
+}
+
+.success-box button:hover {
+  transform: scale(1.05);
+}
+
+/* Animasi */
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(20px)}
+  to {opacity:1; transform:none}
+}
+
+/* subtle animations */
+.fade-in{animation:fadeIn .36s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app fade-in">
+
+  <!-- LOGIN -->
+  <div id="page-login" class="page active">
+    <div class="card">
+      <h1>WA BADAK V1</h1>
+
+      <input id="username" class="input" placeholder="Username" />
+      <input id="password" class="input" placeholder="Password" type="password" />
+      <button class="btn" id="btnLogin">Login</button>
+      <div class="small" style="margin-bottom:10px">@Cupzyy</div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="page-home" class="page">
+    <div class="card card-compact">
+      <div style="display:flex;justify-content:space-between">
+        <div>
+          <img src="https://files.catbox.moe/65hpuj.jpg" alt="Banner">    
+          <div class="home-hello" id="homeHello">Halo, User 👋</div>
+          <div class="small">Selamat datang — pilih menu dari pojok kanan atas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:18px"></div>
+
+    <div class="card">
+      <h2 style="color:var(--accent2);margin:0 0 12px">Fitur Cepat</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button class="btn" onclick="navigate('wa')">Wa Badak</button>
+        <button class="btn secondary" onclick="navigate('info')">Info Akun</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WA BADAK -->
+  <div id="page-wa" class="page">
+    <div class="card card-compact">
+    <img src="https://files.catbox.moe/65hpuj.jpg" alt="Banner">
+      <h2 style="color:var(--accent2);margin:0 0 8px">WA Badak</h2>
+      <div class="small" style="margin-bottom:10px">Masukkan nomor WA (contoh: 628123456789)</div>
+      <input id="waNumber" class="input" placeholder="Masukkan nomor WA (628xxx)" />
+      <div style="display:flex;gap:10px">
+        <button class="btn" id="btnStartBadak">Mulai Badak</button>
+        <button class="btn secondary" id="btnClear">Reset</button>
+      </div>
+      <div id="waStatus" class="status" style="display:none">Status: <span id="waStatusText">—</span></div>
+      <div style="height:8px"></div>
+      <div class="small">-</div>
+    </div>
+  </div>
+  
+<!-- IQC -->
+<div id="page-iqc" class="page">
+  <img src="https://files.catbox.moe/65hpuj.jpg" alt="Banner">
+  <h1>Iphone Quoted Generator</h1>
+  
+  <!-- Revisi: ganti id="text" jadi id="message" -->
+  <input id="message" class="message" placeholder="Tulis kata-kata kamu disini... ✨">
+  
+  <button onclick="generateImage()">🚀 Kirim</button>
+  <div class="small" style="margin-bottom:10px">Note: Tekan gambar jika ingin didownload</div>
+  <div class="result" id="result"></div>
+</div>
+
+  
+  <!-- INFO AKUN -->
+  <div id="page-info" class="page">
+    <div class="card card-compact" style="text-align:left">
+  <img src="https://files.catbox.moe/65hpuj.jpg" alt="Banner">
+      <h2 style="color:var(--accent2);margin:0 0 8px">Info Akun</h2>
+      <div class="small" style="margin-bottom:10px">Detail akun Anda</div>
+      <div style="padding:12px;border-radius:10px;background:#fff;border:1px solid #f3f3ff">
+        <div style="font-weight:800" id="infoName">Nama</div>
+        <div class="small" id="infoUser">username</div>
+        <div style="height:8px"></div>
+        <div style="font-weight:800">Expired:</div>
+        <div id="infoExpire" style="color:#d04b4b;font-weight:800">—</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Topbar & Drawer -->
+<div class="topbar" id="topbar">
+  <div class="hamb" id="hamb">
+    <svg width="18" height="14" viewBox="0 0 20 16" xmlns="http://www.w3.org/2000/svg"><rect y="0" width="20" height="2" rx="1" fill="#4b00ff"/><rect y="7" width="20" height="2" rx="1" fill="#4b00ff"/><rect y="14" width="20" height="2" rx="1" fill="#4b00ff"/></svg>
+  </div>
+  <div class="drawer" id="drawer">
+    <a href="#" onclick="drawerNav('home')">Home</a>
+    <a href="#" onclick="drawerNav('wa')">WA Badak</a>
+    <a href="#" onclick="drawerNav('info')">Info Akun</a>
+    <a href="#" style="color:#d04b4b" onclick="doLogout()">Logout</a>
+  </div>
+</div>
+
+<div class="toast" id="toast">Sukses</div>
+
+<script>
+/*
+ - Login menggunakan username & password
+ - Akun disimpan di localStorage key 'wa_accounts' (array objek: {username,password,name,expireISO})
+ - Session disimpan di 'wa_session'
+ - Drawer disembunyikan di halaman login
+ - WA Badak 'Mulai Badak' mensimulasikan aktivasi proxy untuk nomor yg dimasukkan
+*/
+
+
+const ACC_KEY = 'wa_accounts';
+const SESS_KEY = 'wa_session';
+
+function $(id){return document.getElementById(id)}
+function showToast(txt,ms=2200){ const t=$('toast'); t.textContent=txt; t.style.display='block'; setTimeout(()=>t.style.display='none', ms); }
+
+
+/* create sample account if none so login can be tested */
+if(!localStorage.getItem(ACC_KEY)){
+  const demo = [{username:'demo', password:'demo123', name:'Pengguna Demo', expire: new Date(Date.now()+1000*60*60*24*7).toISOString()}];
+  localStorage.setItem(ACC_KEY, JSON.stringify(demo));
+}
+
+
+/* SPA navigation */
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  $('page-'+name).classList.add('active');
+  $('topbar').style.display = (name === 'login') ? 'none' : 'block';
+  if(name==='home') updateHome();
+  if(name==='info') updateInfo();
+}
+
+
+/* session helpers */
+function getSession(){ try{return JSON.parse(localStorage.getItem(SESS_KEY));}catch(e){return null} }
+function setSession(s){ localStorage.setItem(SESS_KEY, JSON.stringify(s)); }
+function clearSession(){ localStorage.removeItem(SESS_KEY); }
+
+
+/* login */
+$('btnLogin').addEventListener('click', ()=>{
+  const u = $('username').value.trim();
+  const p = $('password').value;
+  if(!u || !p){ showToast('Isi username & password'); return; }
+  const accounts = JSON.parse(localStorage.getItem(ACC_KEY)||'[]');
+  const acc = accounts.find(a=>a.username === u && a.password === p);
+  if(!acc){ showToast('Username / password salah'); return; }
+  setSession({username: acc.username, name: acc.name});
+  showToast('Login berhasil');
+  setTimeout(()=> showPage('home'), 400);
+});
+
+
+/* === Blackbox AI (pakai endpoint siputzx) === */
+function askBlackbox(){
+  const prompt = $('bbPrompt').value.trim();
+  const resultDiv = $('bbResult');
+
+  if(!prompt){
+    alert("Harap masukkan pertanyaan!");
+    return;
+  }
+
+  resultDiv.innerHTML = '<div class="loader"></div><p>Sedang berpikir...</p>';
+
+  const apiUrl = `https://api.siputzx.my.id/api/ai/blackboxai?content=${encodeURIComponent(prompt)}`;
+
+  fetch(apiUrl)
+    .then(res => res.json())
+    .then(data => {
+      if(data && data.result){
+        resultDiv.innerHTML = `<p><b>Jawaban AI:</b></p><div style="text-align:left">${data.result}</div>`;
+      } else {
+        resultDiv.innerHTML = "<p style='color:red'>Ups, tidak ada respon dari AI.</p>";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      resultDiv.innerHTML = "<p style='color:red'>Terjadi kesalahan koneksi API.</p>";
+    });
+}
+
+/* topbar/drawer */
+$('hamb').addEventListener('click', ()=> {
+  const d = $('drawer'); d.style.display = (d.style.display==='block') ? 'none' : 'block';
+});
+function drawerNav(page){ $('drawer').style.display='none'; navigate(page); }
+function navigate(page){ showPage(page); }
+
+
+/* WA Badak */
+$('btnStartBadak').addEventListener('click', ()=>{
+  const num = $('waNumber').value.trim();
+  if(!/^62\d{6,}$/.test(num)){ showToast('Masukkan nomor valid mulai 62...'); return; }
+  $('waStatus').style.display='block';
+  $('waStatusText').textContent = 'Memproses badak...';
+
+  // munculkan modal berhasil
+  showSuccess(`Bug berhasil dikirim ke ${num} 😜👉`);
+
+  setTimeout(()=> $('waStatusText').textContent = `Badak aktif untuk ${num}`, 900);
+});
+$('btnClear').addEventListener('click', ()=>{ 
+  $('waNumber').value=''; 
+  $('waStatus').style.display='none'; 
+  showToast('Reset'); 
+});
+
+/* update UI */
+function updateHome(){
+  const s = getSession(); $('homeHello').textContent = s ? `Halo, ${s.name} 👋` : 'Halo, User 👋';
+}
+function updateInfo(){
+  const s = getSession();
+  if(!s){ showPage('login'); return; }
+  const accounts = JSON.parse(localStorage.getItem(ACC_KEY)||'[]');
+  const acc = accounts.find(a=>a.username === s.username) || {};
+  $('infoName').textContent = acc.name || s.name || '—';
+  $('infoUser').textContent = acc.username || s.username || '—';
+  $('infoExpire').textContent = acc.expire ? (new Date(acc.expire)).toLocaleString() : 'Tidak ada';
+}
+
+/* logout */
+function doLogout(){ clearSession(); showPage('login'); showToast('Anda keluar'); }
+
+/* WA Badak */
+$('btnStartBadak').addEventListener('click', ()=>{
+  const num = $('waNumber').value.trim();
+  if(!/^62\d{6,}$/.test(num)){ showToast('Masukkan nomor valid mulai 62...'); return; }
+  $('waStatus').style.display='block';
+  $('waStatusText').textContent = 'Memproses badak...';
+  showToast(`Nomor ${num} success terbadak ✅`, 2200);
+  setTimeout(()=> $('waStatusText').textContent = `Badak aktif untuk ${num}`, 900);
+});
+$('btnClear').addEventListener('click', ()=>{ $('waNumber').value=''; $('waStatus').style.display='none'; showToast('Reset'); });
+
+/* on load: if session exists -> home else login */
+window.addEventListener('load', ()=>{
+  const s = getSession();
+  if(s) showPage('home'); else showPage('login');
+});
+</script>
+</body>
+</html>
